@@ -1,0 +1,47 @@
+buildscript {
+    repositories {
+
+    }
+
+    dependencies {
+
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+group = 'com.github.nicholashauschild'
+version = '0.1.0-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+
+}
+
+dependencies {
+
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "../../gradle/repo")
+        }
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.0.1'
+}
