@@ -1,4 +1,7 @@
 buildscript {
+    ext {
+        spring_boot_version = '1.5.6.RELEASE'
+    }
     repositories {
 
     }
@@ -17,11 +20,12 @@ version = '0.1.0-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
-
+    mavenCentral()
 }
 
 dependencies {
-
+    compile group: 'org.springframework.boot', name: 'spring-boot', version: "${spring_boot_version}"
+    compile group: 'org.springframework.boot', name: 'spring-boot-actuator', version: "${spring_boot_version}"
 }
 
 task sourcesJar(type: Jar) {
