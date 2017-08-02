@@ -11,12 +11,22 @@ buildscript {
     }
 }
 
+plugins {
+    id "com.jfrog.bintray" version "1.7.3"
+    id "com.jfrog.artifactory" version "4.4.18"
+}
+
 apply plugin: 'java'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
 group = 'com.github.nicholashauschild'
 version = '0.1.0-SNAPSHOT'
 sourceCompatibility = 1.8
+
+def bintrayUsername = hasProperty('bintray.username') ? project.getProperty('bintray.username') : ''
+def bintrayApiKey = hasProperty('bintray.apikey') ? project.getProperty('bintray.apikey') : ''
+def isSnapshot = version.endsWith('SNAPSHOT')
+def isRelease = !isSnapshot
 
 repositories {
     mavenCentral()
@@ -32,18 +42,88 @@ task sourcesJar(type: Jar) {
     classifier = 'sources'
 }
 
-artifacts {
-    archives sourcesJar
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
 }
 
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: uri("../../gradle/repo"))
-        }
-    }
+artifacts {
+    jar
+    archives sourcesJar
+    archives javadocJar
 }
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.0.1'
+}
+
+def pomConfig = {
+    name 'dependency-info-contributor'
+    url 'https://github.com/nicholashauschild/dependency-info-contributor'
+    licenses {
+        license {
+            name 'MIT License'
+            url 'https://opensource.org/licenses/mit-license.php'
+            distribution 'repo'
+        }
+    }
+    developers {
+        developer {
+            id 'nicholashauschild'
+            name 'Nicholas Hauschild'
+            email 'nicholas.hauschild@gmail.com'
+        }
+    }
+}
+
+publishing {
+    publications {
+        theJar(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'SpringBoot InfoContributor that provides gradle dependency details')
+                root.children().last() + pomConfig
+            }
+        }
+    }
+    repositories {
+        mavenLocal()
+    }
+}
+
+artifactory {
+    contextUrl = 'https://oss.jfrog.org/artifactory'
+    publish {
+        repository {
+            repoKey = 'oss-snapshot-local'
+            username = bintrayUsername
+            password = bintrayApiKey
+        }
+        defaults {
+            publications 'theJar'
+        }
+    }
+}
+
+bintray {
+    user = bintrayUsername
+    key = bintrayApiKey
+
+    publications = ['theJar']
+
+    pkg {
+        repo = 'maven'
+        name = 'dependency-info-contributor'
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/nicholashauschild/dependency-info-contributor.git'
+
+        desc = 'SpringBoot InfoContributor that provides gradle dependency details'
+        labels = ['spring-boot', 'info-contributor', 'java']
+        websiteUrl = 'https://github.com/nicholashauschild/dependency-info-contributor'
+        issueTrackerUrl = 'https://github.com/nicholashauschild/dependency-info-contributor/issues'
+    }
 }
