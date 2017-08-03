@@ -28,10 +28,20 @@ public class DependencyInfoContributor implements InfoContributor {
 
   public List<Dependency> getDependencies() {
     final List<Dependency> dependencies = new ArrayList<Dependency>();
+
+    // line format
+    // --------------------------------------------
+    // dependency.xyz=group/name/version || [input]
+    // ^^^^^^^^^^^                       || match
+    //               ^group/name/version || split =
+    //                group^name^version || split /
+    // --------------------------------------------
     for(final String line : resourceLines()) {
       if(line.startsWith("dependency.")) {
         final String[] parts = line.split("=");
-        dependencies.add(new Dependency(parts[1]));
+        final String gnvUnparsed = parts[1];
+        final String[] gnv = gnvUnparsed.split("/");
+        dependencies.add(new Dependency(gnv[0], gnv[1], gnv[2]));
       }
     }
     return dependencies;
@@ -52,32 +62,6 @@ public class DependencyInfoContributor implements InfoContributor {
       return lines;
     } catch(final IOException e) {
       throw new RuntimeException(e);
-    }
-  }
-
-  public static class Dependency {
-    private final String group;
-    private final String name;
-    private final String version;
-
-    Dependency(final String unparsed) {
-      final String[] parsed = unparsed.split("/");
-
-      this.group = parsed[0];
-      this.name = parsed[1];
-      this.version = parsed[2];
-    }
-
-    public String getGroup() {
-      return group;
-    }
-
-    public String getName() {
-      return name;
-    }
-
-    public String getVersion() {
-      return version;
     }
   }
 }
