@@ -116,6 +116,7 @@ bintray {
     key = bintrayApiKey
 
     publications = ['theJar']
+    publish = true
 
     pkg {
         repo = 'maven'
