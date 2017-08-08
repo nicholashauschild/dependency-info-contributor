@@ -27,7 +27,7 @@ public class DependencyInfoContributor implements InfoContributor {
   }
 
   public List<Dependency> getDependencies() {
-    final List<Dependency> dependencies = new ArrayList<Dependency>();
+    final List<Dependency> dependencies = new ArrayList<>();
 
     // line format
     // --------------------------------------------
