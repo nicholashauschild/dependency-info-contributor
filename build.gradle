@@ -92,9 +92,6 @@ publishing {
             }
         }
     }
-    repositories {
-        mavenLocal()
-    }
 }
 
 artifactory {
