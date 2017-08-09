@@ -17,7 +17,7 @@ import org.springframework.core.io.Resource;
 
 @Configuration
 @AutoConfigureBefore(EndpointAutoConfiguration.class)
-@EnableConfigurationProperties({DependencyInfoContributorProperties.class, })
+@EnableConfigurationProperties(DependencyInfoContributorProperties.class)
 public class DependencyInfoContributorAutoConfiguration {
   private final DependencyInfoContributorProperties properties;
 
