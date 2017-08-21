@@ -20,11 +20,11 @@ apply plugin: 'java'
 apply plugin: 'maven-publish'
 
 group = 'com.github.nicholashauschild'
-version = '0.3.0-SNAPSHOT'
+version = file('version.txt').text.trim()
 sourceCompatibility = 1.8
 
-def bintrayUsername = hasProperty('bintray.username') ? project.getProperty('bintray.username') : ''
-def bintrayApiKey = hasProperty('bintray.apikey') ? project.getProperty('bintray.apikey') : ''
+def bintrayUsername = hasProperty('bintray_username') ? project.getProperty('bintray_username') : ''
+def bintrayApiKey = hasProperty('bintray_apikey') ? project.getProperty('bintray_apikey') : ''
 def isSnapshot = version.endsWith('SNAPSHOT')
 def isRelease = !isSnapshot
 
